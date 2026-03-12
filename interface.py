@@ -1,7 +1,6 @@
 """
-interface.py — Interfaz de Usuario (Fase 4)
-Sistema Predictivo de Crédito Bancario con IA Explicativa
-Puerto: 8501
+interface.py — Rediseño Completo (Fase 5 - Minimalista & Bancario)
+Sistema Predictivo de Crédito Bancario con Estilo Institucional
 """
 
 import streamlit as st
@@ -9,556 +8,372 @@ import requests
 import json
 
 # ─────────────────────────────────────────────
-# Configuración de página
+# Configuración Superior de Página
 # ─────────────────────────────────────────────
 st.set_page_config(
-    page_title="Motor Predictivo de Crédito | IA Local",
-    page_icon="🧠",
+    page_title="Audit System | Credit Risk Engine",
+    page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
+# ── Paleta de Colores Soberia (Estilo Bancario Premium)
+COLORS = {
+    "primary": "#0F172A",    # Navy profundo (Casi negro)
+    "accent": "#1E40AF",     # Azul Institucional
+    "bg_light": "#F8FAFC",   # Fondo suave
+    "text_main": "#1E293B",  # Texto principal
+    "text_sub": "#64748B",   # Texto secundario
+    "border": "#E2E8F0",     # Bordes limpios
+    "white": "#FFFFFF",
+    "success": "#059669",    # Verde esmeralda (Aprobación)
+    "danger": "#DC2626"      # Rojo corporativo (Rechazo)
+}
+
 # ─────────────────────────────────────────────
-# CSS Personalizado — diseño premium oscuro
+# SISTEMA DE ESTILOS (Sencillo, Ordenado, Moderno)
 # ─────────────────────────────────────────────
-st.markdown("""
+st.markdown(f"""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; }
+    /* Global */
+    html, body, [class*="css"] {{
+        font-family: 'Inter', sans-serif;
+        background-color: {COLORS['bg_light']};
+        color: {COLORS['text_main']};
+    }}
 
-  html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-    background: #0a0e1a;
-    color: #e2e8f0;
-  }
+    /* Header & Branding */
+    .top-bar {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: {COLORS['white']};
+        border-bottom: 1px solid {COLORS['border']};
+        margin-bottom: 2rem;
+    }}
+    .logo-text {{
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        font-size: 1.25rem;
+        color: {COLORS['primary']};
+    }}
+    .logo-text span {{
+        color: {COLORS['accent']};
+        font-weight: 400;
+    }}
 
-  /* Fondo general */
-  .stApp {
-    background: linear-gradient(135deg, #0a0e1a 0%, #0d1527 50%, #0a0e1a 100%);
-    min-height: 100vh;
-  }
+    /* Tabs Customization */
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: 2rem;
+        border-bottom: 2px solid {COLORS['border']};
+        margin-bottom: 2rem;
+    }}
+    .stTabs [data-baseweb="tab"] {{
+        height: 50px !important;
+        background-color: transparent !important;
+        border: none !important;
+        font-weight: 600 !important;
+        color: {COLORS['text_sub']} !important;
+        font-size: 0.95rem !important;
+        padding: 0 0.5rem !important;
+    }}
+    .stTabs [aria-selected="true"] {{
+        color: {COLORS['accent']} !important;
+        border-bottom: 2px solid {COLORS['accent']} !important;
+    }}
 
-  /* Header */
-  .hero-header {
-    text-align: center;
-    padding: 3rem 1rem 2rem 1rem;
-    background: linear-gradient(180deg, rgba(99,102,241,0.08) 0%, transparent 100%);
-    border-bottom: 1px solid rgba(99,102,241,0.15);
-    margin-bottom: 2.5rem;
-  }
-  .hero-title {
-    font-size: 3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #38bdf8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -1px;
-    margin: 0;
-  }
-  .hero-subtitle {
-    font-size: 1.1rem;
-    color: #64748b;
-    margin-top: 0.6rem;
-    font-weight: 400;
-  }
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(99,102,241,0.12);
-    border: 1px solid rgba(99,102,241,0.3);
-    border-radius: 20px;
-    padding: 4px 14px;
-    font-size: 0.78rem;
-    color: #818cf8;
-    margin-top: 1rem;
-    font-weight: 500;
-  }
-  .badge-dot {
-    width: 7px; height: 7px;
-    background: #22c55e;
-    border-radius: 50%;
-    display: inline-block;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.3); }
-  }
+    /* Card Styling */
+    .console-card {{
+        background: {COLORS['white']};
+        padding: 2.5rem;
+        border-radius: 12px;
+        border: 1px solid {COLORS['border']};
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }}
 
-  /* Panel de inputs */
-  .section-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #64748b;
-    margin-bottom: 1rem;
-    margin-top: 0.5rem;
-  }
+    /* Section Headers */
+    .section-header {{
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: {COLORS['text_sub']};
+        margin-bottom: 1.5rem;
+        border-left: 3px solid {COLORS['accent']};
+        padding-left: 10px;
+    }}
 
-  /* Inputs de Streamlit */
-  .stNumberInput > div > div > input,
-  .stSelectbox > div > div {
-    background: rgba(255,255,255,0.04) !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    border-radius: 10px !important;
-    color: #e2e8f0 !important;
-    transition: border-color 0.2s ease;
-  }
-  .stNumberInput > div > div > input:focus {
-    border-color: rgba(99,102,241,0.5) !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.1) !important;
-  }
+    /* Form Fields */
+    div[data-baseweb="input"] > div, 
+    div[data-baseweb="select"] > div {{
+        border-radius: 8px !important;
+        border: 1px solid {COLORS['border']} !important;
+        background-color: {COLORS['bg_light']} !important;
+    }}
 
-  /* Labels */
-  .stNumberInput label, .stSelectbox label, .stCheckbox label {
-    color: #e2e8f0 !important;
-    font-size: 0.88rem !important;
-    font-weight: 500 !important;
-    line-height: 1.5 !important;
-  }
+    /* Action Button */
+    .stButton button {{
+        width: 100% !important;
+        background-color: {COLORS['primary']} !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.75rem !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        transition: all 0.2s ease !important;
+    }}
+    .stButton button:hover {{
+        background-color: {COLORS['accent']} !important;
+        transform: translateY(-1px);
+    }}
 
-  /* Badge de atributo HMEQ */
-  .attr-tag {
-    display: inline-block;
-    background: rgba(99,102,241,0.15);
-    border: 1px solid rgba(99,102,241,0.35);
-    border-radius: 5px;
-    padding: 1px 7px;
-    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #818cf8;
-    letter-spacing: 0.5px;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-  .attr-desc {
-    font-size: 0.82rem;
-    color: #64748b;
-    font-weight: 400;
-    vertical-align: middle;
-  }
+    /* Results */
+    .result-badge {{
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+    }}
+    .approved-badge {{ background: #D1FAE5; color: {COLORS['success']}; }}
+    .rejected-badge {{ background: #FEE2E2; color: {COLORS['danger']}; }}
 
-  /* Botón principal */
-  .stButton > button {
-    width: 100%;
-    padding: 0.9rem 2rem;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white !important;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 24px rgba(99,102,241,0.35);
-    letter-spacing: 0.3px;
-  }
-  .stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(99,102,241,0.5);
-    background: linear-gradient(135deg, #7c7ff7 0%, #9f75ff 100%);
-  }
-  .stButton > button:active {
-    transform: translateY(0px);
-  }
+    .prob-text {{
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: {COLORS['primary']};
+        margin-bottom: 0.5rem;
+    }}
 
-  /* Tarjeta de resultado */
-  .result-card {
-    border-radius: 20px;
-    padding: 2.2rem 2rem;
-    margin: 1.5rem 0;
-    text-align: center;
-    animation: fadeInUp 0.5s ease both;
-  }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .result-card.approved {
-    background: linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(16,185,129,0.05) 100%);
-    border: 1px solid rgba(34,197,94,0.3);
-    box-shadow: 0 8px 40px rgba(34,197,94,0.1);
-  }
-  .result-card.rejected {
-    background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(220,38,38,0.05) 100%);
-    border: 1px solid rgba(239,68,68,0.3);
-    box-shadow: 0 8px 40px rgba(239,68,68,0.1);
-  }
-  .result-icon { font-size: 3.5rem; margin-bottom: 0.5rem; }
-  .result-label {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    margin: 0;
-  }
-  .result-label.approved { color: #22c55e; }
-  .result-label.rejected { color: #ef4444; }
-  .result-sub { font-size: 0.9rem; color: #64748b; margin-top: 0.4rem; }
+    /* Audit Panel */
+    .audit-panel {{
+        background-color: #F1F5F9;
+        border-radius: 12px;
+        padding: 2rem;
+        border: 1px solid {COLORS['border']};
+        line-height: 1.7;
+    }}
+    .audit-label {{
+        color: {COLORS['accent']};
+        font-weight: 700;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        display: block;
+    }}
 
-  /* Barras de probabilidad */
-  .prob-bar-wrapper {
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
-    height: 10px;
-    overflow: hidden;
-    margin: 6px 0 2px 0;
-  }
-  .prob-bar-fill {
-    height: 100%;
-    border-radius: 8px;
-    transition: width 1s ease;
-  }
-  .prob-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.78rem;
-    color: #94a3b8;
-    font-weight: 500;
-  }
-
-  /* Panel de explicación IA */
-  .ia-panel {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-top: 1.5rem;
-  }
-  .ia-panel-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #c084fc;
-    margin-bottom: 0.8rem;
-  }
-  .ia-panel p {
-    font-size: 0.95rem;
-    color: #cbd5e1;
-    line-height: 1.7;
-    margin: 0;
-  }
-
-  /* Divisor */
-  hr { border-color: rgba(255,255,255,0.07) !important; }
-
-  /* Sidebar */
-  .css-1d391kg { background: #0d1527; }
-
-  /* Info boxes */
-  .stInfo { background: rgba(99,102,241,0.08) !important; border: 1px solid rgba(99,102,241,0.2) !important; }
-  .stWarning { background: rgba(245,158,11,0.08) !important; border: 1px solid rgba(245,158,11,0.2) !important; }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #0a0e1a; }
-  ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+    /* Hide Streamlit elements */
+    [data-testid="stHeader"], [data-testid="stToolbar"] {{
+        display: none !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# URLs de servicios locales
+# LOGICA Y SERVICIOS
 # ─────────────────────────────────────────────
-BRAIN_URL   = "http://localhost:8000/predict"
+BACKEND_URL = "http://localhost:8000/predict"
 LM_URL      = "http://localhost:1234/v1/chat/completions"
 
-# ─────────────────────────────────────────────
-# HEADER
-# ─────────────────────────────────────────────
-st.markdown("""
-<div class="hero-header">
-  <h1 class="hero-title">Motor Predictivo de Crédito</h1>
-  <p class="hero-subtitle">Red Neuronal + Explicación con LLM Local · 100% privado · sin internet</p>
-  <span class="hero-badge"><span class="badge-dot"></span>Sistema en línea</span>
+# ── Header de Marca
+st.markdown(f"""
+<div class="top-bar">
+    <div class="logo-text">AUDIT<span>ENGINE</span></div>
+    <div style="font-size: 0.8rem; color: {COLORS['text_sub']}; font-weight: 500;">
+        SISTEMA DE AUDITORÍA DE RIESGO DE CRÉDITO © 2026
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# LAYOUT PRINCIPAL
+# ESTRUCTURA DE PESTAÑAS
 # ─────────────────────────────────────────────
-col_form, col_sep, col_result = st.columns([5, 0.3, 5])
+tab1, tab2 = st.tabs(["DIAGNÓSTICO DE RIESGO", "ESPECIFICACIONES DEL MODELO"])
 
-with col_form:
-    # ── Sección 1: Perfil del Solicitante
-    st.markdown('<div class="section-title">👤 Perfil del Solicitante</div>', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        job = st.selectbox(
-            "JOB — Categoría laboral del solicitante",
-            options=["Other", "Office", "Sales", "Mgr", "ProfExe", "Self"],
-            format_func=lambda x: {
-                "Other":   "Other  · Otros oficios",
-                "Office":  "Office · Administrativo",
-                "Sales":   "Sales  · Ventas",
-                "Mgr":     "Mgr    · Gerente",
-                "ProfExe": "ProfExe· Prof. Ejecutivo",
-                "Self":    "Self   · Independiente",
-            }[x],
-            help="Atributo JOB en hmeq.csv — Ocupación del solicitante"
-        )
-    with c2:
-        reason = st.selectbox(
-            "REASON — Propósito del préstamo",
-            options=["DebtCon", "HomeImp"],
-            format_func=lambda x: (
-                "DebtCon · Consolidación de deuda" if x == "DebtCon"
-                else "HomeImp · Mejora del hogar"
-            ),
-            help="Atributo REASON en hmeq.csv"
-        )
+# --- TAB 1: DIAGNÓSTICO ---
+with tab1:
+    col_entry, col_analysis = st.columns([1.2, 0.8], gap="large")
 
-    c3, c4 = st.columns(2)
-    with c3:
-        yoj = st.number_input(
-            "YOJ — Años en el trabajo actual",
-            min_value=0.0, max_value=40.0, value=5.0, step=0.5,
-            help="Years On Job — Atributo YOJ en hmeq.csv"
-        )
-    with c4:
-        debtinc = st.number_input(
-            "DEBTINC — Ratio Deuda / Ingreso (%)",
-            min_value=0.0, max_value=100.0, value=30.0, step=0.5,
-            help="Debt-to-Income ratio — Atributo DEBTINC en hmeq.csv. Si se desconoce, marcar la casilla de abajo."
-        )
+    with col_entry:
+        st.markdown('<div class="console-card">', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Entrada de Parámetros</div>', unsafe_allow_html=True)
+        
+        # Grid 1: Identidad Financiera
+        c1, c2 = st.columns(2)
+        with c1:
+            job = st.selectbox("Categoría Laboral (JOB)", 
+                             ["Other", "Office", "Sales", "Mgr", "ProfExe", "Self"])
+        with c2:
+            reason = st.selectbox("Propósito del Préstamo (REASON)", ["DebtCon", "HomeImp"])
+        
+        # Grid 2: Valores del Préstamo
+        c3, c4 = st.columns(2)
+        with c3:
+            loan = st.number_input("Monto del Préstamo ($)", min_value=100.0, value=15000.0)
+        with c4:
+            mortdue = st.number_input("Deuda Hipotecaria ($)", min_value=0.0, value=65000.0)
+        
+        # Grid 3: Atributos de solvencia
+        c5, c6, c7 = st.columns(3)
+        with c5:
+            value = st.number_input("Valor Propiedad ($)", min_value=100.0, value=120000.0)
+        with c6:
+            yoj = st.number_input("Antigüedad Laboral (Años)", min_value=0.0, value=7.0)
+        with c7:
+            debtinc_desconocido = st.checkbox("DEBTINC desconocido", value=False)
+            debtinc_val = st.number_input("Ratio Deuda/Ingreso (%)", 0.0, 100.0, 32.5, disabled=debtinc_desconocido)
 
-    debtinc_desconocido = st.checkbox(
-        "DEBTINC desconocido — será imputado por el modelo (activa DEBTINC_Flag = 1)",
-        value=False
-    )
-    debtinc_flag = 1.0 if debtinc_desconocido else 0.0
+        st.markdown('<div style="margin: 2rem 0;"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Historial Crediticio</div>', unsafe_allow_html=True)
+        
+        c8, c9, c10 = st.columns(3)
+        with c8:
+            clage = st.number_input("Edad Cuenta (meses)", 0.0, value=150.0)
+        with c9:
+            ninq = st.number_input("Consultas Recientes", 0, value=1)
+        with c10:
+            clno = st.number_input("Líneas de Crédito", 0, value=18)
+            
+        c11, c12 = st.columns(2)
+        with c11:
+            derog = st.number_input("Informes Derogatorios", 0, value=0)
+        with c12:
+            delinq = st.number_input("Líneas en Mora", 0, value=0)
 
-    st.markdown("---")
+        st.markdown('<div style="margin: 2.5rem 0;"></div>', unsafe_allow_html=True)
+        analizar = st.button("EJECUTAR ANÁLISIS PREDICTIVO")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── Sección 2: Datos Financieros
-    st.markdown('<div class="section-title">💰 Datos Financieros</div>', unsafe_allow_html=True)
-    c5, c6 = st.columns(2)
-    with c5:
-        loan = st.number_input(
-            "LOAN — Monto del préstamo solicitado ($)",
-            min_value=100.0, max_value=500000.0, value=10000.0, step=500.0,
-            help="Amount of the loan request — Atributo LOAN en hmeq.csv"
-        )
-    with c6:
-        mortdue = st.number_input(
-            "MORTDUE — Deuda hipotecaria pendiente ($)",
-            min_value=0.0, max_value=1000000.0, value=50000.0, step=1000.0,
-            help="Amount due on existing mortgage — Atributo MORTDUE en hmeq.csv"
-        )
+    with col_analysis:
+        if analizar:
+            # Imputación
+            final_debtinc = 33.7799 if (debtinc_desconocido or debtinc_val is None) else debtinc_val
+            payload = {
+                "job": job, "reason": reason, "loan": loan, "mortdue": mortdue,
+                "value": value, "yoj": yoj, "derog": derog, "delinq": delinq,
+                "clage": clage, "ninq": ninq, "clno": clno, "debtinc": final_debtinc,
+                "debtinc_flag": 1.0 if (debtinc_desconocido or debtinc_val is None) else 0.0
+            }
 
-    c7, c8 = st.columns(2)
-    with c7:
-        value = st.number_input(
-            "VALUE — Valor actual de la propiedad ($)",
-            min_value=0.0, max_value=2000000.0, value=100000.0, step=1000.0,
-            help="Value of current property — Atributo VALUE en hmeq.csv"
-        )
-    with c8:
-        clno = st.number_input(
-            "CLNO — Número de líneas de crédito existentes",
-            min_value=0, max_value=100, value=20,
-            help="Number of existing credit lines — Atributo CLNO en hmeq.csv"
-        )
+            with st.spinner("Procesando Dictamen..."):
+                try:
+                    r = requests.post(BACKEND_URL, json=payload, timeout=10)
+                    res = r.json()
+                    prob = res["probabilidad_aprobacion"]
+                    aprobado = res["aprobado"] == 1
 
-    c9, c10 = st.columns(2)
-    with c9:
-        clage = st.number_input(
-            "CLAGE — Antigüedad de la cuenta más vieja (meses)",
-            min_value=0.0, max_value=600.0, value=100.0, step=5.0,
-            help="Age of oldest credit line in months — Atributo CLAGE en hmeq.csv"
-        )
-    with c10:
-        ninq = st.number_input(
-            "NINQ — Consultas crediticias recientes",
-            min_value=0, max_value=20, value=1,
-            help="Number of recent credit inquiries — Atributo NINQ en hmeq.csv"
-        )
+                    st.markdown('<div class="console-card">', unsafe_allow_html=True)
+                    st.markdown('<div class="section-header">Dictamen del Auditor</div>', unsafe_allow_html=True)
+                    
+                    if aprobado:
+                        st.markdown('<span class="result-badge approved-badge">✓ CRÉDITO APROBADO</span>', unsafe_allow_html=True)
+                    else:
+                        st.markdown('<span class="result-badge rejected-badge">✗ CRÉDITO RECHAZADO</span>', unsafe_allow_html=True)
+                    
+                    st.markdown(f'<div class="prob-text">{prob*100:.1f}%</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="color:{COLORS["text_sub"]}; font-size: 0.9rem; margin-bottom: 2rem;">Índice de Confianza del Modelo</div>', unsafe_allow_html=True)
+                    
+                    # LLM Explanation
+                    prompt_sistema = (
+                        "Eres un Auditor Senior de Riesgos. Expón EXCLUSIVAMENTE los fundamentos técnicos "
+                        "de la decisión. No incluyas formalidades. Español directo y profesional."
+                    )
+                    prompt_usuario = f"Decisión: {res['decision']}\nProbabilidad: {prob*100:.1f}%\nEntrada: {json.dumps(payload)}"
 
-    st.markdown("---")
+                    try:
+                        lm_resp = requests.post(
+                            LM_URL,
+                            headers={"Content-Type": "application/json"},
+                            json={
+                                "model": "google/gemma-3-12b",
+                                "messages": [
+                                    {"role": "system", "content": prompt_sistema},
+                                    {"role": "user",   "content": prompt_usuario},
+                                ],
+                                "temperature": 0.5,
+                            },
+                            timeout=60
+                        )
+                        explicacion = lm_resp.json()["choices"][0]["message"]["content"].strip()
+                        
+                        st.markdown(f"""
+                        <div class="audit-panel">
+                            <span class="audit-label">Informe de Fundamentos Técnicos</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        st.markdown(explicacion)
 
-    # ── Sección 3: Historial Negativo
-    st.markdown('<div class="section-title">⚠️ Historial Negativo</div>', unsafe_allow_html=True)
-    c11, c12 = st.columns(2)
-    with c11:
-        derog = st.number_input(
-            "DEROG — Informes derogatorios (negativos graves)",
-            min_value=0, max_value=20, value=0,
-            help="Number of major derogatory reports — Atributo DEROG en hmeq.csv"
-        )
-    with c12:
-        delinq = st.number_input(
-            "DELINQ — Líneas de crédito en mora",
-            min_value=0, max_value=20, value=0,
-            help="Number of delinquent credit lines — Atributo DELINQ en hmeq.csv"
-        )
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    analizar = st.button("🧠 Analizar Solicitud", use_container_width=True)
-
-# Separador visual
-with col_sep:
-    st.markdown("""
-    <div style="height:100%;display:flex;align-items:center;justify-content:center;padding-top:12rem;">
-      <div style="width:1px;height:250px;background:linear-gradient(to bottom,transparent,rgba(99,102,241,0.3),transparent);"></div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ─────────────────────────────────────────────
-# PANEL DE RESULTADOS
-# ─────────────────────────────────────────────
-with col_result:
-
-    if analizar:
-        payload = {
-            "job": job, "reason": reason,
-            "loan": loan, "mortdue": mortdue, "value": value,
-            "yoj": yoj, "derog": derog, "delinq": delinq,
-            "clage": clage, "ninq": ninq, "clno": clno,
-            "debtinc": debtinc, "debtinc_flag": debtinc_flag
-        }
-
-        # ── Llamada a brain.py
-        with st.spinner("Evaluando con la Red Neuronal..."):
-            try:
-                resp = requests.post(BRAIN_URL, json=payload, timeout=10)
-                resp.raise_for_status()
-                resultado = resp.json()
-            except requests.exceptions.ConnectionError:
-                st.error("❌ No se puede conectar con **brain.py**. Asegúrate de tenerlo corriendo con:\n\n`python3 brain.py`")
-                st.stop()
-            except Exception as e:
-                st.error(f"❌ Error inesperado: {e}")
-                st.stop()
-
-        aprobado  = resultado["aprobado"]
-        decision  = resultado["decision"]
-        prob_ok   = resultado["probabilidad_aprobacion"]
-        prob_bad  = resultado["probabilidad_rechazo"]
-
-        # ── Tarjeta de decisión
-        if aprobado == 1:
-            st.markdown(f"""
-            <div class="result-card approved">
-              <div class="result-icon">✅</div>
-              <p class="result-label approved">APROBADO</p>
-              <p class="result-sub">El modelo predice bajo riesgo de impago</p>
-            </div>
-            """, unsafe_allow_html=True)
+                    except Exception as e:
+                        st.error("No se pudo conectar con el motor de explicación IA.")
+                    
+                    st.markdown('</div>', unsafe_allow_html=True)
+                except Exception as e:
+                    st.error(f"Error de conexión con el motor predictivo: {e}")
         else:
             st.markdown(f"""
-            <div class="result-card rejected">
-              <div class="result-icon">🚫</div>
-              <p class="result-label rejected">RECHAZADO</p>
-              <p class="result-sub">El modelo detecta alto riesgo crediticio</p>
+            <div style="text-align:center; padding: 5rem 2rem; border: 2px dashed {COLORS['border']}; border-radius: 12px; opacity:0.6;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">⚖️</div>
+                <div style="font-weight: 600; color: {COLORS['text_sub']};">Esperando Datos de Solicitante</div>
+                <p style="font-size: 0.85rem; color: {COLORS['text_sub']};">Ingrese la información en el panel izquierdo para generar el dictamen.</p>
             </div>
             """, unsafe_allow_html=True)
 
-        # ── Barras de probabilidad
-        st.markdown('<div class="section-title" style="margin-top:1.5rem;">📊 Probabilidades</div>', unsafe_allow_html=True)
-
-        pct_ok  = int(prob_ok * 100)
-        pct_bad = int(prob_bad * 100)
-
+# --- TAB 2: ARQUITECTURA ---
+with tab2:
+    st.markdown('<div class="console-card">', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Especificaciones de Ingeniería</div>', unsafe_allow_html=True)
+    
+    col_info, col_flow = st.columns([1, 1], gap="large")
+    
+    with col_info:
         st.markdown(f"""
-        <div>
-          <div class="prob-label"><span>✅ Aprobación</span><span>{pct_ok}%</span></div>
-          <div class="prob-bar-wrapper">
-            <div class="prob-bar-fill" style="width:{pct_ok}%;background:linear-gradient(90deg,#22c55e,#4ade80);"></div>
-          </div>
-        </div>
-        <div style="margin-top:0.8rem;">
-          <div class="prob-label"><span>🚫 Rechazo</span><span>{pct_bad}%</span></div>
-          <div class="prob-bar-wrapper">
-            <div class="prob-bar-fill" style="width:{pct_bad}%;background:linear-gradient(90deg,#ef4444,#f87171);"></div>
-          </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # ── Explicación con LM Studio
-        st.markdown('<div class="section-title" style="margin-top:2rem;">🤖 Explicación con IA (LM Studio)</div>', unsafe_allow_html=True)
-
-        with st.spinner("Generando explicación narrativa..."):
-            prompt_sistema = (
-                "Eres un analista financiero experto en riesgo crediticio bancario. "
-                "Tu tarea es explicar la decisión de un modelo de red neuronal al cliente de forma clara, empática y accesible. "
-                "Identifica los 2 o 3 factores más importantes que influyeron en la decisión. "
-                "Usa un tono profesional pero humano. "
-                "Responde SIEMPRE en español. Máximo 4 oraciones."
-            )
-            prompt_usuario = (
-                f"El modelo predictivo tomó la decisión: {decision}.\n"
-                f"Atributos del cliente (base de datos hmeq.csv):\n"
-                f"  JOB={job}, REASON={reason}, LOAN={loan:,.0f}, MORTDUE={mortdue:,.0f}, "
-                f"VALUE={value:,.0f}, YOJ={yoj}, DEROG={derog}, DELINQ={delinq}, "
-                f"NINQ={ninq}, CLAGE={clage}, CLNO={clno}, DEBTINC={debtinc}%, "
-                f"DEBTINC_Flag={int(debtinc_flag)}.\n"
-                f"Explica brevemente por qué se tomó esta decisión, mencionando los atributos más influyentes por su nombre técnico (DEBTINC, DEROG, DELINQ, etc.)."
-            )
-
-            try:
-                lm_resp = requests.post(
-                    LM_URL,
-                    headers={"Content-Type": "application/json"},
-                    json={
-                        "model": "google/gemma-3-12b",
-                        "messages": [
-                            {"role": "system", "content": prompt_sistema},
-                            {"role": "user",   "content": prompt_usuario},
-                        ],
-                        "temperature": 0.6,
-                        "max_tokens": 250,
-                        "stream": False,
-                    },
-                    timeout=60,
-                )
-                lm_resp.raise_for_status()
-                explicacion = lm_resp.json()["choices"][0]["message"]["content"].strip()
-                st.markdown(f"""
-                <div class="ia-panel">
-                  <div class="ia-panel-title">💬 Análisis del Asistente IA</div>
-                  <p>{explicacion}</p>
-                </div>
-                """, unsafe_allow_html=True)
-
-            except requests.exceptions.ConnectionError:
-                st.warning("⚠️ LM Studio no está activo en el puerto 1234. El resultado del modelo ya está disponible arriba. Activa LM Studio para obtener la explicación narrativa.")
-            except Exception as e:
-                st.warning(f"⚠️ No se pudo obtener la explicación de IA: {e}")
-
-        # ── Datos técnicos (expandible)
-        with st.expander("🔬 Ver datos técnicos enviados al modelo"):
-            st.json(resultado)
-
-    else:
-        # Estado vacío (aún no se analiza)
-        st.markdown("""
-        <div style="
-          display:flex; flex-direction:column; align-items:center; justify-content:center;
-          height:500px; opacity:0.35;
-          border: 1px dashed rgba(99,102,241,0.3);
-          border-radius: 20px;
-          margin-top: 1rem;
-        ">
-          <div style="font-size:4rem; margin-bottom:1rem;">🧠</div>
-          <p style="font-size:1rem; color:#64748b; text-align:center;">
-            Completa el formulario y haz clic en<br><strong style="color:#818cf8;">Analizar Solicitud</strong>
-          </p>
+        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem;">Modelo Red Neuronal MLP</h3>
+        <p style="color: {COLORS['text_sub']}; line-height: 1.7; margin-bottom: 2rem;">
+            El motor predictivo está basado en un Perceptrón Multicapa (MLP) optimizado mediante <b>Búsqueda en Rejilla (Grid Search)</b> para maximizar la precisión en el dataset HMEQ.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="padding: 1rem; border: 1px solid {COLORS['border']}; border-radius: 8px;">
+                <div style="font-size: 0.7rem; font-weight: 700; color: {COLORS['text_sub']};">NEURONAS OCULTAS</div>
+                <div style="font-size: 1.2rem; font-weight: 800; color: {COLORS['accent']};">10 Unidades</div>
+            </div>
+            <div style="padding: 1rem; border: 1px solid {COLORS['border']}; border-radius: 8px;">
+                <div style="font-size: 0.7rem; font-weight: 700; color: {COLORS['text_sub']};">FUNCIÓN ACTIVACIÓN</div>
+                <div style="font-size: 1.2rem; font-weight: 800; color: {COLORS['accent']};">Sigmoide</div>
+            </div>
+            <div style="padding: 1rem; border: 1px solid {COLORS['border']}; border-radius: 8px;">
+                <div style="font-size: 0.7rem; font-weight: 700; color: {COLORS['text_sub']};">VARIABLES ENTRADA</div>
+                <div style="font-size: 1.2rem; font-weight: 800; color: {COLORS['accent']};">19 Atributos</div>
+            </div>
+            <div style="padding: 1rem; border: 1px solid {COLORS['border']}; border-radius: 8px;">
+                <div style="font-size: 0.7rem; font-weight: 700; color: {COLORS['text_sub']};">MOTOR INFERENCIA</div>
+                <div style="font-size: 1.2rem; font-weight: 800; color: {COLORS['accent']};">NumPy / Python</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
+    
+    with col_flow:
+        st.markdown(f"""
+        <div style="background: {COLORS['bg_light']}; padding: 2rem; border-radius: 12px; text-align: center;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: {COLORS['text_sub']}; margin-bottom: 1rem;">FLUJO DE PROCESAMIENTO</div>
+            <div style="font-weight: 600; padding: 0.75rem; border: 1px solid {COLORS['border']}; border-radius: 8px; background: white;">Entrada de Datos</div>
+            <div style="margin: 10px;">↓</div>
+            <div style="font-weight: 600; padding: 0.75rem; border: 1px solid {COLORS['accent']}; border-radius: 8px; background: {COLORS['accent']}10; color: {COLORS['accent']};">Capa Oculta (10 neuronas)</div>
+            <div style="margin: 10px;">↓</div>
+            <div style="font-weight: 600; padding: 0.75rem; border: 1px solid {COLORS['primary']}; border-radius: 8px; background: {COLORS['primary']}; color: white;">Clasificación Final (Softmax)</div>
+            <div style="margin-top: 2rem; font-size: 0.8rem; color: {COLORS['success']}; font-weight: 700;">● SISTEMA OPERATIVO Y VALIDADO</div>
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-# FOOTER
-# ─────────────────────────────────────────────
-st.markdown("<br><hr>", unsafe_allow_html=True)
-st.markdown("""
-<div style="text-align:center; font-size:0.78rem; color:#334155; padding: 0.5rem 0 1.5rem 0;">
-  Motor Predictivo · Red Neuronal entrenada en RapidMiner · Infraestructura 100% local<br>
-  <span style="color:#4f46e5;">brain.py</span> :8000 &nbsp;·&nbsp;
-  <span style="color:#7c3aed;">LM Studio</span> :1234 &nbsp;·&nbsp;
-  <span style="color:#0ea5e9;">Streamlit</span> :8501
+# ── Footer
+st.markdown(f"""
+<div style="text-align: center; margin-top: 4rem; padding-bottom: 2rem;">
+    <p style="color: {COLORS['text_sub']}; font-size: 0.75rem;">AUDIT ENGINE | PHASE 5 STANDARDS | CORPORATE BANKING EDITION</p>
 </div>
 """, unsafe_allow_html=True)

@@ -157,8 +157,15 @@ def softmax(x):
     return e / e.sum()
 
 def run_nn(input_vector: np.ndarray) -> dict:
+    # Capa Oculta: Activación Logística (Sigmoid)
     hidden_out  = sigmoid(hidden_W @ input_vector + hidden_B)
-    output_prob = softmax(sigmoid(output_W @ hidden_out + output_B))
+    
+    # Capa de Salida: Activación Logística + Normalización Simplemax
+    # Simplemax: prob_i = activation_i / sum(activations)
+    output_vals = sigmoid(output_W @ hidden_out + output_B)
+    sum_vals = np.sum(output_vals)
+    output_prob = output_vals / sum_vals if sum_vals != 0 else output_vals
+    
     prob_bad  = float(output_prob[0])
     prob_good = float(output_prob[1])
     return {
