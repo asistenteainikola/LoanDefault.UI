@@ -208,8 +208,7 @@ with tab1:
     c_left, c_right = st.columns([1.1, 0.9], gap="large")
 
     with c_left:
-        # Se abre la tarjeta y el primer título en el mismo bloque para evitar cierre prematuro del div por el navegador
-        st.markdown('<div class="luminous-card"><span class="section-title">Perfil Financiero</span>', unsafe_allow_html=True)
+        st.markdown('<span class="section-title">Perfil Financiero</span>', unsafe_allow_html=True)
         
         c1, c2 = st.columns(2)
         with c1:
@@ -247,9 +246,7 @@ with tab1:
         with c11:
             delinq = st.number_input("Líneas en Mora — DELINQ", 0, value=0)
 
-        st.markdown('<div style="margin: 2.5rem 0 1rem 0;"></div>', unsafe_allow_html=True)
         analizar = st.button("EJECUTAR AUDITORÍA")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with c_right:
         if analizar:
