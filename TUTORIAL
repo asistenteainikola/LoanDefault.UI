@@ -1,0 +1,53 @@
+# 📖 TUTORIAL: Génesis y Arquitectura del Proyecto Audit Engine
+
+Este documento detalla el proceso de creación del sistema, desde la fase de minería de datos hasta la interfaz de usuario final.
+
+---
+
+### Paso 1: El Origen en RapidMiner (El Entrenamiento)
+Todo comenzó con el dataset **HMEQ (Home Equity)**. En RapidMiner, se limpiaron los datos y se entrenó una **Red Neuronal Multicapa (MLP)**.
+*   **La Red:** Configurada con una capa oculta de 10 neuronas y funciones de activación sigmoides.
+*   **El Artefacto:** Se exportó la inteligencia del modelo al estándar **PMML** (*Predictive Model Markup Language*), generando el archivo `BASIC NEURAL NETWORK CREADA POR MI.pmml`.
+*   **Contenido del PMML:** Este XML contiene los **Pesos (W)** y **Sesgos (b)** exactos, además de los parámetros de normalización (Z-Score y LinearNorm).
+
+---
+
+### Paso 2: Ingeniería Inversa del PMML (El "Cerebro")
+En la fase de desarrollo local, se creó el archivo `brain.py` para decodificar manualmente el PMML:
+*   **Extracción:** Se leyeron las medias y desviaciones estándar para replicar el preprocesamiento de RapidMiner.
+*   **Matemáticas con NumPy:** Se implementó la red neuronal desde cero usando álgebra matricial: `Salida = Activación(X · W + b)`.
+*   **Ajuste Simplemax:** Se identificó que el modelo requería normalización `simplemax` en la capa de salida para asegurar que la probabilidad de aprobación fuera 1:1 con lo entrenado.
+
+---
+
+### Paso 3: El Servidor de Inferencia (FastAPI)
+Para centralizar el cálculo, se montó un servidor de alto rendimiento con **FastAPI**:
+*   Generación del endpoint `/predict`.
+*   **Flujo de Datos:** Entrada JSON → Normalización Técnica → Inferencia Neuronal → Salida de Dictamen (Probabilidad y Decisión).
+
+---
+
+### Paso 4: Inteligencia Narrativa (IA Local)
+Se integró **LM Studio** para proporcionar explicabilidad al modelo:
+*   **Modelo:** Gemma 3 12B (vía API compatible con OpenAI).
+*   **Función:** Transformar los resultados numéricos en un **Informe de Fundamentos Técnicos** redactado por un "Auditor Senior de Riesgos", explicando factores como el ratio DTI o la morosidad.
+
+---
+
+### Paso 5: Interfaz "Luminous Bank" (Streamlit)
+El paso final fue el desarrollo de `interface.py` enfocado en los estándares de banca corporativa:
+1.  **Diseño Visual:** Uso de CSS personalizado para crear un **Header Azul Institucional** y una estética luminosa y profesional (Modo Claro forzado).
+2.  **Tabs de Navegación:** Separación entre la consola de **Diagnóstico** y la vista de **Arquitectura**.
+3.  **Trazabilidad:** Se incluyeron las siglas originales del modelo (YOJ, LOAN, CLAGE, etc.) en las etiquetas de los campos para total transparencia técnica.
+
+---
+
+### El Flujo Final de Ejecución
+1.  El usuario ingresa los datos en la interfaz.
+2.  `interface.py` envía los datos al motor `brain.py`.
+3.  `brain.py` ejecuta la red neuronal y devuelve la probabilidad.
+4.  La IA Local (LLM) genera la explicación del resultado.
+5.  El usuario recibe un dictamen completo y fundamentado.
+
+---
+**Proyecto Audit Engine - Excelencia en Riesgo Crediticio Local.**
