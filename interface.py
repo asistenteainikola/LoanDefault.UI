@@ -193,39 +193,39 @@ with tab1:
         
         c1, c2 = st.columns(2)
         with c1:
-            job = st.selectbox("Categoría Profesional", ["Other", "Office", "Sales", "Mgr", "ProfExe", "Self"])
+            job = st.selectbox("Categoría Profesional — JOB", ["Other", "Office", "Sales", "Mgr", "ProfExe", "Self"])
         with c2:
-            reason = st.selectbox("Finalidad", ["DebtCon", "HomeImp"])
+            reason = st.selectbox("Finalidad — REASON", ["DebtCon", "HomeImp"])
         
         c3, c4 = st.columns(2)
         with c3:
-            loan = st.number_input("Capital Solicitado ($)", min_value=100.0, value=15000.0)
+            loan = st.number_input("Capital Solicitado — LOAN ($)", min_value=100.0, value=15000.0)
         with c4:
-            mortdue = st.number_input("Saldo Hipotecario ($)", min_value=0.0, value=65000.0)
+            mortdue = st.number_input("Saldo Hipotecario — MORTDUE ($)", min_value=0.0, value=65000.0)
         
         c5, c6 = st.columns(2)
         with c5:
-            value = st.number_input("Valor de Garantía ($)", min_value=100.0, value=120000.0)
+            value = st.number_input("Valor de Garantía — VALUE ($)", min_value=100.0, value=120000.0)
         with c6:
-            yoj = st.number_input("Estabilidad (Años)", min_value=0.0, value=7.0)
+            yoj = st.number_input("Estabilidad — YOJ (Años)", min_value=0.0, value=7.0)
 
         debtinc_desconocido = st.checkbox("DEBTINC desconocido (Imputar media)", value=False)
-        debtinc_val = st.number_input("Ratio DTI (%)", 0.0, 100.0, 32.5, disabled=debtinc_desconocido)
+        debtinc_val = st.number_input("Ratio DTI — DEBTINC (%)", 0.0, 100.0, 32.5, disabled=debtinc_desconocido)
 
         st.markdown('<span class="section-title" style="margin-top:2.5rem">Comportamiento Crediticio</span>', unsafe_allow_html=True)
         c7, c8, c9 = st.columns(3)
         with c7:
-            clage = st.number_input("Madurez (Meses)", 0.0, value=150.0)
+            clage = st.number_input("Madurez — CLAGE (Meses)", 0.0, value=150.0)
         with c8:
-            ninq = st.number_input("Consultas (6m)", 0, value=1)
+            ninq = st.number_input("Consultas — NINQ (6m)", 0, value=1)
         with c9:
-            clno = st.number_input("Cuentas Totales", 0, value=18)
+            clno = st.number_input("Cuentas Totales — CLNO", 0, value=18)
             
         c10, c11 = st.columns(2)
         with c10:
-            derog = st.number_input("Alertas Derogatorias", 0, value=0)
+            derog = st.number_input("Alertas Derogatorias — DEROG", 0, value=0)
         with c11:
-            delinq = st.number_input("Líneas en Mora", 0, value=0)
+            delinq = st.number_input("Líneas en Mora — DELINQ", 0, value=0)
 
         st.markdown('<div style="margin: 2.5rem 0 1rem 0;"></div>', unsafe_allow_html=True)
         analizar = st.button("EJECUTAR AUDITORÍA")
