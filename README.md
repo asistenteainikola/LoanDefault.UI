@@ -1,61 +1,74 @@
-# 🏦 LoanDefault.UI - Motor Predictivo de Crédito Local
+# 🏦 Audit Engine - Motor Predictivo de Riesgo Crediticio
 
-Sistema end-to-end para la predicción de riesgos crediticios, combinando una **Red Neuronal nativa** y explicación impulsada por **IA Local (LLM)**. Este proyecto implementa un laboratorio de análisis de datos completo, desde la inferencia técnica hasta la interpretación humana.
+## 🌟 Visión General
+**Audit Engine** es un sistema inteligente de evaluación crediticia *end-to-end* diseñado bajo estándares de banca corporativa. Combina la precisión técnica de una **Red Neuronal Multicapa (MLP)** con la capacidad explicativa de la **IA Generativa Local**, proporcionando dictámenes de riesgo transparentes, rápidos y 100% privados.
 
-![Interfaz de Usuario](https://raw.githubusercontent.com/asistenteainikola/LoanDefault.UI/main/screenshot.png) *(Nota: Imagen referencial)*
+![Audit Engine UI](https://raw.githubusercontent.com/asistenteainikola/LoanDefault.UI/main/screenshot.png)
 
-## 🚀 Características Principales
+## 🛠️ Innovaciones Técnicas (Fase 7 - Luminous Bank)
 
--   **⚙️ Motor de Inferencia Nativo:** Implementación en Python/NumPy de una red neuronal exportada desde PMML (RapidMiner), eliminando dependencias pesadas como Java.
--   **🧠 Explicación con IA Local:** Integración con **Gemma 3 12B** (vía LM Studio) para transformar probabilidades técnicas en razones de negocio comprensibles.
--   **🎨 Interfaz Streamlit Premium:** UI moderna con soporte para modo oscuro, visualizaciones de probabilidad y campos de entrada alineados con el dataset estándar `HMEQ`.
--   **🔒 100% Privado y Local:** Todo el procesamiento ocurre en tu máquina. Sin APIs externas, sin filtrado de datos.
+### 1. Inferencia Local de Alta Precisión
+- **Engine:** Implementación nativa en Python/NumPy de una red neuronal exportada desde PMML (RapidMiner).
+- **Normalización Simplemax:** Implementación exacta de la función de activación de salida según la especificación del modelo original, garantizando probabilidades precisas del 0% al 100%.
+- **Preprocesamiento Robusto:** Gestión automática de valores atípicos mediante Z-Score y escalamiento lineal `[-3, 3]`. Imputación inteligente de datos faltantes (especialmente en la variable crítica `DEBTINC`).
+
+### 2. Explicabilidad con IA (LLM Core)
+Integración fluida con modelos de lenguaje locales (ej. **Gemma 3 12B**) para transformar los *logits* de la red neuronal en informes de fundamentos técnicos comprensibles para auditores humanos.
+
+### 3. Interfaz "Luminous Bank"
+UI premium diseñada en Streamlit con:
+- Estética limpia, luminosa y corporativa.
+- **Trazabilidad Técnica:** Etiquetas de parámetros que incluyen las siglas originales del modelo (YOJ, LOAN, CLAGE) para facilitar la auditoría.
+- Diseño responsivo y navegación integrada en el header.
 
 ## 🏗️ Arquitectura del Sistema
 
-El proyecto se divide en tres capas principales:
+El ecosistema opera localmente en tres capas:
 
-1.  **Backend (FastAPI):** `brain.py` carga el modelo y gestiona el preprocesamiento (Z-score + Normalización) y la ejecución de la red neuronal.
-2.  **Frontend (Streamlit):** `interface.py` recolecta los datos del usuario y presenta los resultados.
-3.  **LLM Layer (LM Studio):** Procesa el resultado de la predicción para generar un informe explicativo.
+1.  **Capa de Datos:** Basada en el dataset estándar **HMEQ (Home Equity)**.
+2.  **Motor de Inferencia (`brain.py`):** Servidor FastAPI que encapsula la lógica de la red neuronal y los parámetros de normalización.
+3.  **Capa de Presentación (`interface.py`):** Consola de auditoría construida en Streamlit que gestiona la interacción y la comunicación con el LLM.
 
-## 📋 Requisitos
+## 📊 Diccionario de Variables (HMEQ Standard)
 
--   Python 3.9+
--   [LM Studio](https://lmstudio.ai/) con el modelo `google/gemma-3-12b` corriendo en el puerto `1234`.
--   Librerías principales: `fastapi`, `uvicorn`, `streamlit`, `numpy`, `pandas`, `requests`.
+| Sigla | Atributo Descriptive | Definición |
+|---|---|---|
+| **LOAN** | Capital Solicitado | Monto del préstamo solicitado. |
+| **MORTDUE** | Saldo Hipotecario | Monto adeudado en la hipoteca existente. |
+| **VALUE** | Valor de Garantía | Valor de mercado de la propiedad. |
+| **YOJ** | Estabilidad | Años de antigüedad en el empleo actual. |
+| **DEROG** | Derogatorios | Número de informes derogatorios importantes. |
+| **DELINQ** | Líneas en Mora | Número de líneas de crédito en estado de morosidad. |
+| **CLAGE** | Madurez | Antigüedad de la línea de crédito más antigua (meses). |
+| **NINQ** | Consultas | Número de solicitudes de crédito recientes. |
+| **DEBTINC** | Ratio DTI | Relación entre deuda total e ingresos del solicitante. |
 
-## 🛠️ Instalación y Uso
+## 🚀 Instalación y Despliegue
 
-1. **Clonar el repositorio:**
+### Requisitos Previos
+- Python 3.10+
+- **LM Studio** configurado con un modelo compatible (puerto `1234`).
+
+### Paso a Paso
+
+1. **Clonar Repo e Instalar Dependencias:**
    ```bash
    git clone https://github.com/asistenteainikola/LoanDefault.UI.git
    cd LoanDefault.UI
+   pip install -r requirements.txt
    ```
+   *(Si no existe requirements.txt, instalar: `pip install fastapi uvicorn streamlit numpy pandas requests`)*
 
-2. **Instalar dependencias:**
-   ```bash
-   pip install fastapi uvicorn streamlit numpy pandas requests
-   ```
-
-3. **Ejecutar el Motor Predictivo (Backend):**
+2. **Iniciar el Servidor de Inferencia:**
    ```bash
    python brain.py
    ```
 
-4. **Ejecutar la Interfaz (Frontend):**
+3. **Lanzar la Consola de Auditoría:**
    ```bash
    streamlit run interface.py
    ```
 
-## 📊 Sobre el Dataset HMEQ
-
-El modelo utiliza el dataset **Home Equity (HMEQ)**, que contiene información sobre préstamos hipotecarios. Los atributos clave incluyen:
-- `LOAN`: Monto solicitado.
-- `DEBTINC`: Ratio Deuda/Ingreso.
-- `DEROG`: Informes derogatorios graves.
-- `DELINQ`: Cuentas morosas.
-- `CLAGE`: Antigüedad de la línea de crédito.
-
 ---
-**Desarrollado con ❤️ para el análisis de riesgo crediticio inteligente.**
+**Desarrollado para la excelencia en el análisis de riesgo crédito inteligente.**
+© 2026 Audit Engine Project.
