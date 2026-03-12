@@ -124,7 +124,7 @@ st.markdown(f"""
         border-radius: 12px;
         border: 1px solid #E2E8F0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        margin-top: 2rem;
+        margin-top: 0.5rem;
     }}
 
     /* Section Headers */
@@ -205,12 +205,11 @@ st.markdown(f"""
 tab1, tab2 = st.tabs(["DIAGNÓSTICO", "ARQUITECTURA"])
 
 with tab1:
-    st.markdown('<div style="height: 1rem;"></div>', unsafe_allow_html=True)
     c_left, c_right = st.columns([1.1, 0.9], gap="large")
 
     with c_left:
-        st.markdown('<div class="luminous-card">', unsafe_allow_html=True)
-        st.markdown('<span class="section-title">Perfil Financiero</span>', unsafe_allow_html=True)
+        # Se abre la tarjeta y el primer título en el mismo bloque para evitar cierre prematuro del div por el navegador
+        st.markdown('<div class="luminous-card"><span class="section-title">Perfil Financiero</span>', unsafe_allow_html=True)
         
         c1, c2 = st.columns(2)
         with c1:
@@ -318,8 +317,7 @@ with tab1:
             """, unsafe_allow_html=True)
 
 with tab2:
-    st.markdown('<div class="luminous-card">', unsafe_allow_html=True)
-    st.markdown('<span class="section-title">Especificaciones de Inferencia</span>', unsafe_allow_html=True)
+    st.markdown('<div class="luminous-card"><span class="section-title">Especificaciones de Inferencia</span>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
