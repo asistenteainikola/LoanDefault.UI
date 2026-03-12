@@ -37,16 +37,37 @@ st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-    /* Global Base */
-    html, body, [class*="css"] {{
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: {COLORS['bg_page']};
-        color: {COLORS['text_main']};
+    /* Force Light Theme Variables */
+    :root {{
+        --primary-color: {COLORS['primary']};
+        --background-color: {COLORS['bg_page']};
+        --secondary-background-color: {COLORS['white']};
+        --text-color: {COLORS['text_main']};
+        --font: 'Plus Jakarta Sans', sans-serif;
     }}
 
-    /* Global App Container */
-    [data-testid="stAppViewContainer"] {{
-        background-color: {COLORS['bg_page']};
+    /* Global Base */
+    html, body, [data-testid="stAppViewContainer"] {{
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: {COLORS['bg_page']} !important;
+        color: {COLORS['text_main']} !important;
+    }}
+
+    /* Inputs Focus & Style */
+    input, select, textarea {{
+        color: {COLORS['text_main']} !important;
+        background-color: {COLORS['white']} !important;
+    }}
+    
+    .stNumberInput input, .stSelectbox div[data-baseweb="select"] {{
+        background-color: {COLORS['white']} !important;
+        color: {COLORS['text_main']} !important;
+    }}
+
+    /* Fix for Labels */
+    label p {{
+        color: {COLORS['text_main']} !important;
+        font-weight: 600 !important;
     }}
 
     /* Solid Vibrant Header */
